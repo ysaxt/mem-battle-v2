@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вход / Регистрация</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app" style="max-width: 500px; margin: 0 auto;">
+  <div class="logo" style="text-align:center; margin-bottom: 30px;">
+    <h1>⚡ Мем Битва</h1>
+    <span>вход / регистрация</span>
+  </div>
+  <div class="profile-card" style="max-width:100%;">
+    <h2 id="formTitle">Вход</h2>
+    <input type="text" id="loginInput" placeholder="Логин" style="width:100%; padding:10px; border-radius:40px; border:1px solid #2a2a5a; background:#222; color:#fff; margin-bottom:12px; outline:none;">
+    <input type="password" id="passwordInput" placeholder="Пароль" style="width:100%; padding:10px; border-radius:40px; border:1px solid #2a2a5a; background:#222; color:#fff; margin-bottom:12px; outline:none;">
+    <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center;">
+      <button id="loginBtn" style="background:#3366ff; border:none; padding:10px 30px; border-radius:40px; font-weight:700; color:#fff; cursor:pointer;">Войти</button>
+      <button id="registerBtn" style="background:#22aa44; border:none; padding:10px 30px; border-radius:40px; font-weight:700; color:#fff; cursor:pointer;">Зарегистрироваться</button>
+    </div>
+    <div id="loginMessage" style="margin-top:16px; text-align:center; color:#ff6666;"></div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="common.js"></script>
+<script>
+  const loginInput = document.getElementById('loginInput');
+  const passwordInput = document.getElementById('passwordInput');
+  const loginBtn = document.getElementById('loginBtn');
+  const registerBtn = document.getElementById('registerBtn');
+  const message = document.getElementById('loginMessage');
+
+  function showMessage(text, isError = true) {
+    message.textContent = text;
+    message.style.color = isError ? '#ff6666' : '#88ff88';
+  }
+
+  loginBtn.addEventListener('click', async () => {
+    const login = loginInput.value.trim();
+    const password = passwordInput.value.trim();
+    if (!login || !password) {
+      showMessage('Заполните все поля');
+      return;
+    }
+    const result = await loginUser(login, password);
+    if (result.success) {
+      showMessage('Вход выполнен!', false);
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 500);
+    } else {
+      showMessage(result.message);
+    }
+  });
+
+  registerBtn.addEventListener('click', async () => {
+    const login = loginInput.value.trim();
+    const password = passwordInput.value.trim();
+    if (!login || !password) {
+      showMessage('Заполните все поля');
+      return;
+    }
+    const result = await registerUser(login, password);
+    if (result.success) {
+      showMessage('Регистрация успешна!', false);
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 500);
+    } else {
+      showMessage(result.message);
+    }
+  });
+
+  // Ждём Supabase и только потом проверяем авторизацию.
+  initializeApp().then(() => { if (getCurrentUser()) window.location.href = 'index.html'; });
+</script>
+</body>
+</html>

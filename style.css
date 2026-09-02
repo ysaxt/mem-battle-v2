@@ -1,0 +1,559 @@
+/* ============================================================
+   ОБЩИЙ СБРОС И БАЗОВЫЕ СТИЛИ
+   ============================================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #f5f7fa;
+  color: #1a1a1a;
+  min-height: 100vh;
+  padding: 20px;
+  line-height: 1.5;
+}
+
+/* ============================================================
+   КОНТЕЙНЕР ПРИЛОЖЕНИЯ
+   ============================================================ */
+.app {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 28px 32px 40px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+/* ============================================================
+   ШАПКА
+   ============================================================ */
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #eaeef2;
+}
+
+.logo h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #0066ff;
+  letter-spacing: -0.5px;
+}
+
+.logo span {
+  font-size: 0.95rem;
+  color: #6b7a8a;
+}
+
+.balance-box {
+  background: #1a1a1a;
+  padding: 6px 20px;
+  border-radius: 40px;
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: #ffffff;
+}
+
+/* Кнопка выхода в шапке */
+.header button {
+  background: #cc0000;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 40px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.header button:hover {
+  background: #a30000;
+}
+
+/* ============================================================
+   НАВИГАЦИЯ (вкладки)
+   ============================================================ */
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 28px;
+  background: #f0f2f5;
+  padding: 4px;
+  border-radius: 40px;
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 40px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #5a6a7a;
+  cursor: pointer;
+  transition: 0.2s;
+  min-width: 80px;
+  text-decoration: none;
+  text-align: center;
+}
+
+.tab-btn:hover {
+  background: #e4e8ed;
+  color: #1a1a1a;
+}
+
+.tab-btn.active {
+  background: #0066ff;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 102, 255, 0.25);
+}
+
+/* ============================================================
+   КОНТЕНТ ВКЛАДОК (анимация появления)
+   ============================================================ */
+.tab-content {
+  display: block;
+  animation: fade 0.25s ease;
+}
+@keyframes fade {
+  0% { opacity: 0.2; transform: translateY(4px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   КАРТОЧКИ БАТЛОВ
+   ============================================================ */
+.battles-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin: 16px 0;
+}
+
+.battle-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 20px 24px 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid #edf0f4;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.battle-card:hover {
+  border-color: #0066ff;
+  box-shadow: 0 4px 16px rgba(0, 102, 255, 0.08);
+}
+
+.battle-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.battle-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #0066ff;
+}
+
+.battle-timer {
+  background: #1a1a1a;
+  padding: 4px 16px;
+  border-radius: 40px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+}
+
+/* ============================================================
+   МЕМЫ В БАТЛЕ
+   ============================================================ */
+.battle-memes {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.battle-memes .meme-item {
+  flex: 1;
+  max-width: 200px;
+  text-align: center;
+}
+
+.battle-memes .meme-item img {
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  border-radius: 16px;
+  background: #f0f2f5;
+  border: 2px solid #e4e8ed;
+  transition: border-color 0.2s;
+}
+
+.battle-memes .meme-item img:hover {
+  border-color: #0066ff;
+}
+
+.battle-memes .vs-small {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #cc0000;
+  padding: 0 8px;
+}
+
+/* ============================================================
+   БЛОК СТАВОК
+   ============================================================ */
+.battle-bets {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.battle-bets .bet-group {
+  flex: 1;
+  max-width: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+}
+
+.battle-bets .bet-group input {
+  width: 100%;
+  background: #f5f7fa;
+  border: 1px solid #dce0e5;
+  border-radius: 40px;
+  padding: 8px 12px;
+  color: #1a1a1a;
+  font-weight: 600;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.battle-bets .bet-group input:focus {
+  border-color: #0066ff;
+}
+
+.battle-bets .bet-group button {
+  width: 100%;
+  background: #0066ff;
+  border: none;
+  padding: 8px 0;
+  border-radius: 40px;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.battle-bets .bet-group button:hover {
+  background: #0052cc;
+}
+
+.battle-bets .bet-group button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.battle-bets .bet-group button:active {
+  transform: scale(0.97);
+}
+
+/* Информация о ставке игрока */
+.bet-display {
+  color: #0066ff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-top: 8px;
+  text-align: center;
+}
+
+/* ============================================================
+   ПРОФИЛЬ, АДМИН, ОТПРАВКА МЕМА (общие карточки)
+   ============================================================ */
+.profile-card,
+.admin-card,
+.submit-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 28px 32px;
+  border: 1px solid #edf0f4;
+  max-width: 600px;
+  margin: 0 auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.profile-card h2,
+.admin-card h2,
+.submit-card h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #0066ff;
+  margin-bottom: 12px;
+}
+
+.balance-big {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 12px 0 20px;
+}
+
+.history {
+  background: #f7f9fb;
+  padding: 16px;
+  border-radius: 16px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.history p {
+  padding: 6px 0;
+  border-bottom: 1px solid #eaeef2;
+  color: #1a1a1a;
+  font-size: 0.95rem;
+}
+
+.history .win { color: #0066ff; font-weight: 600; }
+.history .lose { color: #cc0000; font-weight: 600; }
+.history .info { color: #6b7a8a; }
+
+/* ============================================================
+   ТАБЛИЦА ТОПА
+   ============================================================ */
+.top-table {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 20px 24px;
+  border: 1px solid #edf0f4;
+  max-width: 600px;
+  margin: 0 auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.top-table table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.top-table th {
+  padding: 12px 16px;
+  color: #1a1a1a;
+  border-bottom: 2px solid #eaeef2;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.top-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.top-table tr:last-child td {
+  border-bottom: none;
+}
+
+.top-table .rank { color: #0066ff; font-weight: 700; }
+.top-table .name { font-weight: 600; }
+.top-table .score { font-weight: 700; }
+
+/* ============================================================
+   ФОРМЫ (инпуты и кнопки в админке и отправке)
+   ============================================================ */
+.submit-card input,
+.admin-card input {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 40px;
+  border: 1px solid #dce0e5;
+  background: #f5f7fa;
+  color: #1a1a1a;
+  margin-bottom: 14px;
+  outline: none;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.submit-card input:focus,
+.admin-card input:focus {
+  border-color: #0066ff;
+}
+
+.submit-card button,
+.admin-card button {
+  background: #0066ff;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 40px;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-right: 8px;
+}
+
+.submit-card button:hover,
+.admin-card button:hover {
+  background: #0052cc;
+}
+
+/* ============================================================
+   АДМИНКА: СПИСОК ОЖИДАЮЩИХ МЕМОВ
+   ============================================================ */
+.admin-card .pending-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f7f9fb;
+  padding: 12px 16px;
+  border-radius: 16px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+  border: 1px solid #eaeef2;
+}
+
+.admin-card .pending-item img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid #dce0e5;
+}
+
+.admin-card .pending-item .actions button {
+  padding: 4px 14px;
+  font-size: 0.85rem;
+  border: none;
+  border-radius: 40px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #ffffff;
+  transition: background 0.2s;
+}
+
+.admin-card .pending-item .actions .accept {
+  background: #0066ff;
+}
+.admin-card .pending-item .actions .accept:hover {
+  background: #0052cc;
+}
+
+.admin-card .pending-item .actions .reject {
+  background: #cc0000;
+}
+.admin-card .pending-item .actions .reject:hover {
+  background: #a30000;
+}
+
+/* ============================================================
+   ИНФО-ТЕКСТ ПОД БАТЛАМИ
+   ============================================================ */
+.info-text {
+  text-align: center;
+  color: #6b7a8a;
+  margin-top: 20px;
+  font-size: 0.9rem;
+}
+
+/* ============================================================
+   МОДАЛЬНОЕ ОКНО ПОДТВЕРЖДЕНИЯ
+   ============================================================ */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.modal-overlay.active {
+  display: flex;
+}
+.modal-box {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 32px 40px;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  text-align: center;
+}
+.modal-box h2 {
+  color: #0066ff;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.modal-box p {
+  color: #1a1a1a;
+  margin-bottom: 24px;
+  font-size: 1.1rem;
+}
+.modal-box .modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+.modal-box .modal-actions button {
+  padding: 10px 32px;
+  border: none;
+  border-radius: 40px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.modal-box .modal-actions .confirm-btn {
+  background: #0066ff;
+  color: #fff;
+}
+.modal-box .modal-actions .confirm-btn:hover {
+  background: #0052cc;
+}
+.modal-box .modal-actions .cancel-btn {
+  background: #cc0000;
+  color: #fff;
+}
+.modal-box .modal-actions .cancel-btn:hover {
+  background: #a30000;
+}
+
+/* ============================================================
+   АДАПТИВНОСТЬ
+   ============================================================ */
+@media (max-width: 700px) {
+  body { padding: 12px; }
+  .app { padding: 16px; }
+  .header { flex-direction: column; align-items: stretch; gap: 12px; }
+  .tabs { border-radius: 30px; }
+  .tab-btn { flex: 1 1 80px; }
+  .battle-memes { flex-direction: column; }
+  .battle-memes .meme-item { max-width: 100%; }
+  .battle-bets { flex-direction: column; align-items: center; }
+  .battle-bets .bet-group { max-width: 100%; }
+  .profile-card, .admin-card, .submit-card, .top-table { padding: 20px; }
+}

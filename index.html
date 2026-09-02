@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Мем Битва – Битвы</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <header class="header">
+    <div class="logo">
+      <h1>⚡ Мем Битва</h1>
+      <span id="userGreeting">рейтинг + модерация</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:16px;">
+      <div class="balance-box" id="headerBalance">🪙 500</div>
+      <button id="logoutBtn" style="background:#cc3333; border:none; padding:6px 16px; border-radius:40px; font-weight:700; color:#fff; cursor:pointer;">Выйти</button>
+    </div>
+  </header>
+
+  <!-- Навигация -->
+  <div class="tabs">
+    <a href="index.html" class="tab-btn active">🏆 Битвы</a>
+    <a href="profile.html" class="tab-btn">👤 Профиль</a>
+    <a href="top.html" class="tab-btn">📊 Топ</a>
+    <a href="submit.html" class="tab-btn">📤 Отправить мем</a>
+    <a href="admin.html" class="tab-btn" id="adminTab">🛡️ Админ</a>
+  </div>
+
+  <section class="tab-content">
+    <h2 style="margin-top:20px;">⚔️ Мем-битвы</h2>
+    <p style="color:#777;">Выбирайте мем, который вам больше нравится.</p>
+    <div id="battlesContainer" class="battles-list"></div>
+  </section>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="common.js"></script>
+<script>
+(async function(){
+  await initializeApp();
+
+  // ============================================================
+  //  ПРОВЕРКА АВТОРИЗАЦИИ
+  // ============================================================
+  if (!getCurrentUser()) {
+    window.location.replace('login.html');
+    return;
+  }
+
+  // Показать/скрыть админ-вкладку
+  if (!isAdmin()) {
+    document.getElementById('adminTab').style.display = 'none';
+  }
+
+  // Приветствие и выход
+  document.getElementById('userGreeting').textContent = `привет, ${getCurrentUser()}`;
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await logoutUser();
+    window.location.replace('login.html');
+  });
+
+  // ============================================================
+  //  БИТВЫ — безопасный режим голосования без денежных ставок
+  // ============================================================
+  let battles = [];
+
+  const BATTLE_TIMES = [30, 60, 90, 120];
+  const TIERS = ['low', 'mid', 'high', 'top'];
+
+  function pickTwo(data, tier) {
+    const pool = getMemesByTier(data, tier);
+    const source = pool.length >= 2 ? pool : (data.memes || []);
+    if (source.length < 2) return null;
+    const first = source[Math.floor(Math.random() * source.length)];
+    let second = first;
+    for (let i = 0; i < 20 && second.path === first.path; i++) {
+      second = source[Math.floor(Math.random() * source.length)];
+    }
+    if (second.path === first.path) return null;
+    return [first, second];
+  }
+
+  function createBattles(data) {
+    battles = [];
+    BATTLE_TIMES.forEach((time, idx) => {
+      const pair = pickTwo(data, TIERS[idx]);
+      if (!pair) return;
+      battles.push({
+        id: idx,
+        time,
+        timeLeft: time,
+        meme1: pair[0].path,
+        meme2: pair[1].path,
+        memeObj1: pair[0],
+        memeObj2: pair[1],
+        voted: false,
+        timerInterval: null
+      });
+    });
+    renderBattles();
+  }
+
+  function renderBattles() {
+    const container = document.getElementById('battlesContainer');
+    if (!container) return;
+    container.innerHTML = '';
+    if (!battles.length) {
+      container.innerHTML = '<div class="profile-card"><p>Пока недостаточно мемов для создания битв.</p></div>';
+      return;
+    }
+    battles.forEach((b, idx) => {
+      const card = document.createElement('div');
+      card.className = 'battle-card';
+      card.dataset.battleId = idx;
+      card.innerHTML = `
+        <div class="battle-header">
+          <div class="battle-title">⚔️ Батл #${idx + 1}</div>
+          <div class="battle-timer" id="timer_${idx}">⏱️ ${b.timeLeft}</div>
+        </div>
+        <div class="battle-memes">
+          <button class="meme-item vote-meme" data-choice="1" style="border:0;background:transparent;cursor:pointer;">
+            <img src="${b.meme1}" alt="Мем 1" onerror="this.src='https://via.placeholder.com/200x200/22224a/ffffff?text=МЕМ+A'" />
+            <div style="margin-top:8px;font-weight:700;">МЕМ 1</div>
+          </button>
+          <div class="vs-small">VS</div>
+          <button class="meme-item vote-meme" data-choice="2" style="border:0;background:transparent;cursor:pointer;">
+            <img src="${b.meme2}" alt="Мем 2" onerror="this.src='https://via.placeholder.com/200x200/22224a/ffffff?text=МЕМ+B'" />
+            <div style="margin-top:8px;font-weight:700;">МЕМ 2</div>
+          </button>
+        </div>
+        <div id="voteStatus_${idx}" style="color:#666;margin-top:8px;">Выберите мем, который вам больше нравится.</div>
+      `;
+      card.querySelectorAll('.vote-meme').forEach(btn => {
+        btn.addEventListener('click', () => voteForMeme(idx, Number(btn.dataset.choice)));
+      });
+      container.appendChild(card);
+    });
+    battles.forEach(startBattleTimer);
+  }
+
+  function voteForMeme(index, choice) {
+    const battle = battles[index];
+    const data = getCurrentUserData();
+    if (!battle || !data || battle.voted || battle.timeLeft <= 0) return;
+    battle.voted = true;
+    const winner = choice === 1 ? battle.memeObj1 : battle.memeObj2;
+    const mem = data.memes.find(m => m.path === winner.path);
+    if (mem) mem.wins = Number(mem.wins || 0) + 1;
+    saveCurrentUserData();
+    const status = document.getElementById(`voteStatus_${index}`);
+    if (status) status.textContent = '✅ Ваш голос учтён.';
+    document.querySelectorAll(`[data-battle-id="${index}"] .vote-meme`).forEach(b => b.disabled = true);
+  }
+
+  function startBattleTimer(battle) {
+    if (battle.timerInterval) clearInterval(battle.timerInterval);
+    const timerEl = document.getElementById(`timer_${battle.id}`);
+    if (timerEl) timerEl.textContent = `⏱️ ${battle.timeLeft}`;
+    battle.timerInterval = setInterval(() => {
+      battle.timeLeft--;
+      if (timerEl) timerEl.textContent = `⏱️ ${Math.max(0, battle.timeLeft)}`;
+      if (battle.timeLeft <= 0) {
+        clearInterval(battle.timerInterval);
+        document.querySelectorAll(`[data-battle-id="${battle.id}"] .vote-meme`).forEach(b => b.disabled = true);
+      }
+    }, 1000);
+  }
+
+  function initBattles() {
+    const data = getCurrentUserData();
+    if (!data) return;
+    updateBalanceHeader();
+    createBattles(data);
+  }
+
+  // ============================================================
+  //  ЗАПУСК ВСЕХ ФУНКЦИЙ
+  // ============================================================
+  
+  // Инициализация битв
+  initBattles();
+})();
+</script>
+</body>
+</html>
