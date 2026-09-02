@@ -38,44 +38,61 @@
     message.style.color = isError ? '#ff6666' : '#88ff88';
   }
 
+  async function prepareAuth() {
+    await initializeApp();
+    // Если здесь уже есть действующая и корректная сессия — на главную.
+    if (getCurrentUser() && getCurrentUserData()) {
+      window.location.replace('index.html');
+    }
+  }
+
   loginBtn.addEventListener('click', async () => {
     const login = loginInput.value.trim();
-    const password = passwordInput.value.trim();
+    const password = passwordInput.value;
     if (!login || !password) {
       showMessage('Заполните все поля');
       return;
     }
+
+    loginBtn.disabled = true;
+    registerBtn.disabled = true;
+    showMessage('Выполняется вход…', false);
     const result = await loginUser(login, password);
+    loginBtn.disabled = false;
+    registerBtn.disabled = false;
+
     if (result.success) {
       showMessage('Вход выполнен!', false);
-      setTimeout(() => {
-        window.location.href = 'index.html';
-      }, 500);
+      window.location.replace('index.html');
     } else {
-      showMessage(result.message);
+      showMessage(result.message || 'Не удалось войти.');
     }
   });
 
   registerBtn.addEventListener('click', async () => {
     const login = loginInput.value.trim();
-    const password = passwordInput.value.trim();
+    const password = passwordInput.value;
     if (!login || !password) {
       showMessage('Заполните все поля');
       return;
     }
+
+    loginBtn.disabled = true;
+    registerBtn.disabled = true;
+    showMessage('Создаём аккаунт…', false);
     const result = await registerUser(login, password);
+    loginBtn.disabled = false;
+    registerBtn.disabled = false;
+
     if (result.success) {
       showMessage('Регистрация успешна!', false);
-      setTimeout(() => {
-        window.location.href = 'index.html';
-      }, 500);
+      window.location.replace('index.html');
     } else {
-      showMessage(result.message);
+      showMessage(result.message || 'Не удалось зарегистрироваться.');
     }
   });
 
-  // Ждём Supabase и только потом проверяем авторизацию.
-  initializeApp().then(() => { if (getCurrentUser()) window.location.href = 'index.html'; });
+  prepareAuth();
 </script>
 </body>
 </html>

@@ -41,15 +41,10 @@
 <script src="common.js"></script>
 <script>
 (async function(){
-  await initializeApp();
-
   // ============================================================
   //  ПРОВЕРКА АВТОРИЗАЦИИ
   // ============================================================
-  if (!getCurrentUser()) {
-    window.location.replace('login.html');
-    return;
-  }
+  if (!(await requireAuth())) return;
 
   // Показать/скрыть админ-вкладку
   if (!isAdmin()) {
@@ -58,10 +53,7 @@
 
   // Приветствие и выход
   document.getElementById('userGreeting').textContent = `привет, ${getCurrentUser()}`;
-  document.getElementById('logoutBtn').addEventListener('click', async () => {
-    await logoutUser();
-    window.location.replace('login.html');
-  });
+  setupLogoutButton();
 
   // ============================================================
   //  БИТВЫ — безопасный режим голосования без денежных ставок

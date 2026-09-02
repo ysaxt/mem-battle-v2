@@ -71,11 +71,7 @@
 <script src="common.js"></script>
 <script>
 (async function(){
-  await initializeApp();
-  if (!getCurrentUser()) {
-    window.location.replace('login.html');
-    return;
-  }
+  if (!(await requireAuth())) return;
   // Проверяем права
   if (!isAdmin()) {
     document.getElementById('adminPanel').style.display = 'none';
@@ -83,10 +79,7 @@
   }
 
   document.getElementById('userGreeting').textContent = `привет, ${getCurrentUser()}`;
-  document.getElementById('logoutBtn').addEventListener('click', async () => {
-    await logoutUser();
-    window.location.replace('login.html');
-  });
+  setupLogoutButton();
 
   {
     const data = getCurrentUserData();

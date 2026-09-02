@@ -40,21 +40,14 @@
 <script src="common.js"></script>
 <script>
   (async function(){
-  await initializeApp();
-  if (!getCurrentUser()) {
-    window.location.replace('login.html');
-    return;
-  }
+  if (!(await requireAuth())) return;
   // Скрыть админ-вкладку, если не админ
   const adminTab = document.getElementById('adminTab');
   if (!isAdmin() && adminTab) {
     adminTab.style.display = 'none';
   }
   document.getElementById('userGreeting').textContent = `привет, ${getCurrentUser()}`;
-  document.getElementById('logoutBtn').addEventListener('click', async () => {
-    await logoutUser();
-    window.location.replace('login.html');
-  });
+  setupLogoutButton();
 
   {
     const data = getCurrentUserData();
