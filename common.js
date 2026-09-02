@@ -11,7 +11,11 @@ let currentUserData = null;
 let usersCache = {};
 let appInitialized = false;
 
-function technicalEmail(login) { return `${login.toLowerCase()}@mem-battle.local`; }
+function technicalEmail(login) {
+  // Supabase Password Auth требует email, но пользователь его не вводит.
+  // Используем скрытый технический адрес с валидным доменом.
+  return `${login.trim().toLowerCase()}@mem-battle.com`;
+}
 function defaultProfile(login) {
   return { login, balance: 1000, history: [], memes: MEMES_LIST.map(path => ({path, wins:0})), pending: [], is_admin: false };
 }
@@ -55,7 +59,7 @@ async function loadCurrentProfile(id) {
   // Засеиваем его штатным набором один раз.
   if (!Array.isArray(currentUserData.memes) || currentUserData.memes.length === 0) {
     currentUserData.memes = MEMES_LIST.map(path => ({path, wins: 0}));
-    const { data: updated, error: seedError } = await supabase
+    const { data: updated, error: seedError } = await supabaseClient
       .from('profiles')
       .update({ memes: currentUserData.memes })
       .eq('id', id)
@@ -72,6 +76,7 @@ function getCurrentUserData() { return currentUserData; }
 function isAdmin() { return !!currentUserData?.is_admin; }
 
 async function loginUser(login, password) {
+  login = String(login || '').trim();
   if (!supabaseClient) return {success:false, message:'Supabase не настроен'};
   const { data, error } = await supabaseClient.auth.signInWithPassword({email: technicalEmail(login), password});
   if (error) return {success:false, message:'Неверный логин или пароль'};
@@ -80,6 +85,7 @@ async function loginUser(login, password) {
 }
 
 async function registerUser(login, password) {
+  login = String(login || '').trim();
   if (!supabaseClient) return {success:false, message:'Supabase не настроен'};
   if (login.length < 3 || password.length < 4) return {success:false, message:'Логин (мин. 3 символа) и пароль (мин. 4 символа)'};
   const { data, error } = await supabaseClient.auth.signUp({
